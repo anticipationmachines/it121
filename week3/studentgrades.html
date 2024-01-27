@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Grades</title>
+    <style>
+        body {
+            background-color: black;
+            text-align: center;
+            margin-top: 15%;
+            color: lavender;
+            font-family: monospace;
+            font-size: large;
+        }
+
+        .name {
+            font-weight: bold;
+            color: rgb(66, 82, 255);
+            background-color: darkblue;
+            padding: 5px 5px;
+            display: inline-block;
+            width: 70px;
+            left: 300px;
+        }
+
+        .score {
+            font-weight: bold;
+            color: green;
+        }
+
+        .totals {
+            color: black;
+            background-color: white;
+            padding: 5px 5px;
+            display: inline-block;
+            margin-bottom: 15px;
+            width: 70px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    var grades = "jim|25, sue|32, mary|34, ann|22, ted|28, frank|15, lisa|19, mike|30, ahn|26, vishaya|27";
+
+    // Split the grades string into an array of student data
+    var students = grades.split(", ");
+
+    // Variables for total students, lowest, highest, and total score
+    var totalStudents = students.length;
+    var lowestScore = Infinity;
+    var highestScore = -Infinity;
+    var totalScore = 0;
+
+    // Reference to the body element to update the HTML content
+    var body = document.body;
+
+    // Loop through each student data
+    students.forEach(function (studentData) {
+        // Split student data into name and score
+        var [name, score] = studentData.split("|");
+
+        // Capitalize the first letter of the student name
+        name = name.charAt(0).toUpperCase() + name.slice(1);
+
+        // Parse score to an integer
+        score = parseInt(score);
+
+        // Update lowest and highest scores
+        lowestScore = Math.min(lowestScore, score);
+        highestScore = Math.max(highestScore, score);
+
+        // Add score to total score
+        totalScore += score;
+
+        // Display student name and score on the HTML page with CSS classes
+        body.innerHTML += "<p><span class='name'>" + name + "</span> - <span class='score'>" + score + "</span></p>";
+    });
+
+    // Calculate average score
+    var averageScore = totalScore / totalStudents;
+
+    // Sort students alphabetically by name
+    students.sort(function (a, b) {
+        var nameA = a.split("|")[0].toLowerCase();
+        var nameB = b.split("|")[0].toLowerCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+    });
+
+    // Clear the body before displaying the sorted list
+    body.innerHTML = "";
+
+    // Display sorted students on the HTML page with CSS classes
+    students.forEach(function (studentData) {
+        var [name, score] = studentData.split("|");
+        name = name.charAt(0).toUpperCase() + name.slice(1);
+        score = parseInt(score);
+        body.innerHTML += "<p><span class='name'>" + name + "</span> - <span class='score'>" + score + "</span></p>";
+    });
+
+    // Display total number of students on the HTML page with CSS classes
+    body.innerHTML += "<p class='totals'><span>Total Students:</span> <span class='score'>" + totalStudents + "</span></p>";
+
+    // Display lowest, highest, and average scores on the HTML page with CSS classes
+    body.innerHTML += "<p class='totals'><span>Lowest Score:</span> <span class='score'>" + lowestScore + "</span></p>";
+    body.innerHTML += "<p class='totals'><span>Highest Score:</span> <span class='score'>" + highestScore + "</span></p>";
+    body.innerHTML += "<p class='totals'><span>Average Score:</span> <span class='score'>" + averageScore.toFixed(1) + "</span></p>";
+</script>
+
+</body>
+</html>
