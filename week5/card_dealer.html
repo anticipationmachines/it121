@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: green;
+      color: white;
+      text-transform: uppercase;
+      font-family: monospace;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    button {
+      background-color: red;
+      color: rgb(255, 207, 140);
+      text-transform: lowercase;
+      margin-bottom: 20px;
+    }
+
+    #content-container {
+      overflow: hidden; 
+      scale: 140%;
+    }
+
+    #card_hand p {
+      float: left;
+      margin-right: 20px;
+      width: 120px;
+    }
+
+    #card_hand img {
+      width: 50px;
+      height: auto;
+      margin-bottom: 20px;
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="content-container">
+
+    <h1>Robo Dealer</h1>
+
+    <button onclick="dealHand();">Deal Hand</button>
+
+    <div id="card_hand"></div>
+
+  </div>
+
+  <script>
+
+    // Define Card object
+    function Card(value, suit) {
+      this.value = value;
+      this.suit = suit;
+    }
+
+    // Preload images to avoid jitter because of flex css
+    function preloadImages(hand) {
+      const imageUrls = hand.map(card =>
+        `images/${(card.value > 10) ? ['jack', 'queen', 'king', 'ace'][card.value - 11] : card.value}_of_${card.suit.toLowerCase()}.png`
+      );
+
+      const promises = imageUrls.map(url => new Promise(resolve => {
+        const img = new Image();
+        img.src = url;
+        img.onload = resolve;
+      }));
+
+      return Promise.all(promises);
+    }
+
+    // Function to shuffle the deck
+    function shuffleDeck(deck) {
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        // Swap elements
+        const temp = deck[i];
+        deck[i] = deck[j];
+        deck[j] = temp;
+      }
+    }
+
+    // Function to deal a hand of 5 cards
+    const dealHand = async () => {
+      const deck = generateDeck();
+      shuffleDeck(deck);
+
+      const hand = [];
+
+      for (let i = 0; i < 5; i++) {
+        const card = deck.pop(); // pop to retrieve last element from array and remove it avoiding card re-use
+        hand.push(card);
+      }
+
+      // Preload images
+      await preloadImages(hand);
+
+      // Display the hand on the HTML page with corresponding images
+      displayHand(hand);
+
+      return false; // prevent page reload
+    }
+
+    // Function to display the hand on the HTML page 
+    function displayHand(hand) {
+      const $cardHand = $("#card_hand");
+      $cardHand.empty(); // Clear the currently-displayed hand
+
+      for (let i = 0; i < hand.length; i++) {
+        const card = hand[i];
+        const valueName = (card.value > 10) ?
+          ['jack', 'queen', 'king', 'ace'][card.value - 11] :
+          card.value;
+
+        const cardName = `${valueName} of ${card.suit}`;
+
+        // Display image corresponding to the card filename for fun
+        const imageUrl = `images/${valueName}_of_${card.suit.toLowerCase()}.png`;
+
+        $cardHand.append(`<p>${cardName}</p><img src="${imageUrl}" alt="${cardName}">`);
+      }
+    }
+
+    // Generate a deck of 52 cards
+    function generateDeck() {
+      const deck = [];
+      const suits = ['Spades', 'Hearts', 'Diamonds', 'Clubs'];
+
+      for (let value = 2; value <= 14; value++) {
+        for (let s = 0; s < suits.length; s++) {
+          deck.push(new Card(value, suits[s]));
+        }
+      }
+
+      return deck;
+    }
+
+  </script>
+
+</body>
+
+</html>
