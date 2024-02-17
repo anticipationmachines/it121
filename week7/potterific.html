@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <style>
+
+            body {
+            background-color: black;
+            color: white;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: monospace;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .over {
+            background-color: rgba(64, 91, 223, 0.956);
+        }
+
+        button {
+            margin-bottom: 20px;
+            margin-right: 4px;
+            margin-top: 20px;
+            background-color: rgba(64, 91, 223, 0.956);
+            color: rgb(151, 169, 255);
+            border: none;
+            padding: 5px 10px;
+        }
+
+        button:hover{
+            background-color: rgb(151, 169, 255);
+            color: rgba(64, 91, 223, 0.956);
+        }
+
+        button:active{
+            background-color: white;
+        }
+
+        #resetButton{
+            margin-right: 0px;
+        }
+
+        table {
+            border-color: rgba(64, 91, 223, 0.956);
+            text-align: center;
+        }
+
+        th {
+            padding: 15px 15px;
+        }
+
+        td {
+            padding: 15px 15px;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div id="buttons"></div>
+    <table border='1'>
+        <thead>
+            <tr>
+                <th>NAME</th>
+                <th>ROLE</th>
+                <th>HOUSE</th>
+                <th>GENDER</th>
+                <th>ALIGNMENT</th>
+            </tr>
+        </thead>
+        <tbody id="characterTableBody"></tbody>
+    </table>
+    <button id="resetButton">reset</button>
+</div>
+    <script>
+        // list of characters
+        let characters = [
+            {name:"Albus Dumbledore", role:"Staff", house:"Gryffindor", gender:"M", alignment:"Good"},    
+            {name:"Nymphadora Tonks", role:"Order", house:"Hufflepuff", gender:"F", alignment:"Good"},    
+            {name:"Ron Weasley", role:"Student", house:"Gryffindor", gender:"M", alignment:"Good"},    
+            {name:"Ginny Weasley", role:"Student", house:"Gryffindor", gender:"F", alignment:"Good"},    
+            {name:"Hermione Granger", role:"Student", house:"Gryffindor", gender:"F", alignment:"Good"},    
+            {name:"Mad-Eye Moody", role:"Staff", house:"Hufflepuff", gender:"M", alignment:"Good"},    
+            {name:"Prof McGonagall", role:"Staff", house:"Gryffindor", gender:"F", alignment:"Good"},    
+            {name:"Harry Potter", role:"Student", house:"Gryffindor", gender:"M", alignment:"Good"},    
+            {name:"Draco Malfoy", role:"Student", house:"Slytherin", gender:"M", alignment:"Evil"},    
+            {name:"Hagrid", role:"Staff", house:"Gryffindor", gender:"M", alignment:"Good"},    
+            {name:"Luna Lovegood", role:"Student", house:"Ravenclaw", gender:"F", alignment:"Good"},    
+            {name:"Voldemort", role:"Villain", house:"Slytherin", gender:"M", alignment:"Evil"},    
+            {name:"Bellatrix Lestrange", role:"Villain", house:"Slytherin", gender:"F", alignment:"Evil"},           
+            {name:"Severus Snape", role:"Staff", house:"Slytherin", gender:"M", alignment:"?"}
+        ];
+
+        $(document).ready(function(){
+            // Function to generate the table rows
+            function generateTable() {
+                let uniqueHouses = [...new Set(characters.map(character => character.house))];
+
+                // Create buttons for each unique 'house' value
+                let buttonsDiv = $("#buttons");
+                uniqueHouses.forEach(house => {
+                    buttonsDiv.append(`<button class="houseButton" data-house="${house}">${house}</button>`);
+                });
+
+                // Create table rows
+                let tableBody = $("#characterTableBody");
+                characters.forEach(character => {
+                    tableBody.append(`
+                        <tr class="characterRow" data-house="${character.house}">
+                            <td>${character.name}</td>
+                            <td>${character.role}</td>
+                            <td>${character.house}</td>
+                            <td>${character.gender}</td>
+                            <td>${character.alignment}</td>
+                        </tr>
+                    `);
+                });
+
+                // Update row colors after generating rows
+                updateRowColors();
+            }
+
+            // Function to update row colors
+            function updateRowColors() {
+                $(".characterRow:visible").each(function(index) {
+                    $(this).toggleClass("over", index % 2 === 0);
+                });
+            }
+
+            // Call the function to generate the table
+            generateTable();
+
+            // Click handler for house buttons
+            $(document).on("click", ".houseButton", function() {
+                let selectedHouse = $(this).data("house");
+
+                // Hide all rows
+                $(".characterRow").hide();
+
+                // Show only rows matching selected 'house'
+                $(`.characterRow[data-house="${selectedHouse}"]`).show();
+
+                // Update row colors after visibility is changed on all rows
+                updateRowColors();
+            });
+
+            // Click handler for reset button
+            $(document).on("click", "#resetButton", function() {
+                // Show all rows
+                $(".characterRow").show();
+
+                // Update row colors after visibility is changed on all rows
+                updateRowColors();
+            });
+        });
+    </script>
+</body>
+</html>
