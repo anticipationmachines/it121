@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Grainy Radial Gradients</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .gradient {
+      position: absolute;
+      width: 300vw;
+      height: 600vh;
+      background: radial-gradient(circle at center, var(--color1) 0%, var(--color2) 100%);
+      filter: blur(80%);
+      opacity: 0.5;
+      transition: opacity 1s ease-in-out;
+      animation: moveBackAndForth 10s linear infinite alternate;
+    }
+
+    @keyframes moveBackAndForth {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(5%);
+      }
+    }
+
+    .gradient::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/epPzgAAAABJRU5ErkJggg==');
+      pointer-events: none;
+      opacity: 0.1;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    function createGradient() {
+      const gradient = document.createElement('div');
+      gradient.classList.add('gradient');
+
+      const color1 = getRandomColor();
+      const color2 = getRandomColor();
+
+      gradient.style.setProperty('--color1', color1);
+      gradient.style.setProperty('--color2', color2);
+
+      const posX = Math.random() * window.innerWidth - window.innerWidth/2;
+      const posY = Math.random() * window.innerHeight - window.innerHeight/2;
+
+      gradient.style.left = posX + 'px';
+      gradient.style.top = posY + 'px';
+
+      const animationDuration = Math.random() * 8 + 4;
+      const animationDelay = Math.random() * 6;
+
+      gradient.style.animation = `moveBackAndForth ${animationDuration}s linear ${animationDelay}s infinite alternate`;
+
+      document.body.appendChild(gradient);
+
+      setInterval(() => {
+        gradient.style.opacity = Math.random();
+      }, Math.random() * 5000 + 1000);
+    }
+
+    for (let i = 0; i < 20; i++) {
+      createGradient();
+    }
+  </script>
+</body>
+</html>

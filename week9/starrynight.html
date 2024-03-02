@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Starry Night</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      cursor: none;
+    }
+
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="starCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById('starCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Initializations
+    let angle = 0;
+    let scaleFactor = 1;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Center star's initial position
+    let mouseX = canvas.width / 2; 
+    let mouseY = canvas.height / 2; 
+
+    const stars = [];
+    const grassHeight = 100;
+    const starAboveGrass = 120;
+
+    // Generate random flickering stars
+    for (let i = 0; i < 50; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        opacity: Math.random(),
+        flickerSpeed: Math.random() * 0.05 + 0.02,
+      });
+    }
+
+    // Draw individual stars
+    function drawStars() {
+      stars.forEach(star => {
+        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
+        ctx.fillRect(star.x, star.y, 5, 5);
+      });
+    }
+
+    // Draw the grass at the bottom
+    function drawGrass() {
+      const gradient = ctx.createLinearGradient(0, canvas.height - grassHeight, 0, canvas.height);
+      gradient.addColorStop(0, '#000800');
+      gradient.addColorStop(1, '#102200');
+     
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, canvas.height - grassHeight, canvas.width, grassHeight);
+    }
+
+    // Rotating star transformation & position
+    function drawRotatingStar(x, y) {
+      const starY = Math.min(canvas.height - grassHeight - starAboveGrass, y);
+      ctx.save();
+      ctx.translate(x, starY);
+      ctx.rotate(angle);
+      ctx.scale(scaleFactor, scaleFactor);
+
+      // Draw star from points on a circle
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        const outer = pointOnCircle(50, i * (Math.PI * 2) / 5);
+        const inner = pointOnCircle(20, (i + 0.5) * (Math.PI * 2) / 5);
+        ctx.lineTo(outer.x, outer.y);
+        ctx.lineTo(inner.x, inner.y);
+      }
+      ctx.closePath();
+
+      ctx.fillStyle = '#FFD700';
+      ctx.strokeStyle = '#CD853F';
+      ctx.lineWidth = 2;
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function pointOnCircle(radius, angle) {
+      return {
+        x: radius * Math.cos(angle),
+        y: radius * Math.sin(angle),
+      };
+    }
+
+    // Cursor tracking
+    function handleMouseMove(event) {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = event.clientX - rect.left;
+      mouseY = event.clientY - rect.top;
+      mouseY = Math.min(canvas.height - grassHeight - starAboveGrass, mouseY);
+    }
+
+    canvas.addEventListener('mousemove', handleMouseMove);
+
+    // Animation loop
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Sky gradient
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height - grassHeight);
+      gradient.addColorStop(0, '#1a0033');
+      gradient.addColorStop(1, '#000000');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height - grassHeight);
+
+      // Draw stars, rotating star, and grass
+      drawStars();
+      drawRotatingStar(mouseX, mouseY);
+      drawGrass();
+
+      // Update star flickering effect
+      stars.forEach(star => {
+        star.opacity += star.flickerSpeed * (Math.random() - 0.5);
+        star.opacity = Math.max(0, Math.min(1, star.opacity));
+      });
+
+      // Update rotation and scaling for the rotating star
+      angle += 0.02;
+      scaleFactor = Math.abs(Math.sin(angle)) + 1;
+
+      requestAnimationFrame(animate);
+    }
+
+    // Start loop
+    animate();
+  </script>
+</body>
+</html>
