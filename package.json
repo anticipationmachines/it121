@@ -1,0 +1,24 @@
+{
+  "name": "it121_app",
+  "version": "1.0.0",
+  "description": "This is a demo package and part of the it121 class.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anticipationmachines/it121.git"
+  },
+  "keywords": [
+    "test",
+    "app",
+    "it121"
+  ],
+  "author": "fritz rodriguez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anticipationmachines/it121/issues"
+  },
+  "homepage": "https://github.com/anticipationmachines/it121#readme"
+}
